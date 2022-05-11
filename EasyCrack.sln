@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32413.511
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCrack", "EasyCrack\EasyCrack.csproj", "{90298D75-714B-4A1C-96D6-98B9A280788B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90298D75-714B-4A1C-96D6-98B9A280788B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90298D75-714B-4A1C-96D6-98B9A280788B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90298D75-714B-4A1C-96D6-98B9A280788B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90298D75-714B-4A1C-96D6-98B9A280788B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {16FF9856-FD40-40C8-BA03-0169A2C120CD}
+	EndGlobalSection
+EndGlobal
