@@ -29,7 +29,7 @@ namespace EasyCrack
         /// </summary>
         private void InitializeComponent()
         {
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EasyCrack));
             this.browse = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -43,11 +43,10 @@ namespace EasyCrack
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // folderBrowserDialog1
-            // 
-            this.folderBrowserDialog1.HelpRequest += new System.EventHandler(this.folderBrowserDialog1_HelpRequest);
             // 
             // browse
             // 
@@ -55,7 +54,7 @@ namespace EasyCrack
             this.browse.Name = "browse";
             this.browse.Size = new System.Drawing.Size(83, 20);
             this.browse.TabIndex = 0;
-            this.browse.Text = "Browse Folder";
+            this.browse.Text = "Browse Files";
             this.browse.UseVisualStyleBackColor = true;
             this.browse.Click += new System.EventHandler(this.browse_Click);
             // 
@@ -72,9 +71,9 @@ namespace EasyCrack
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 14);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(106, 13);
+            this.label1.Size = new System.Drawing.Size(130, 13);
             this.label1.TabIndex = 3;
-            this.label1.Text = "Choose Game Folder";
+            this.label1.Text = "Choose Game Executable";
             // 
             // appid
             // 
@@ -100,7 +99,7 @@ namespace EasyCrack
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(208, 28);
             this.button1.TabIndex = 6;
-            this.button1.Text = "Crack";
+            this.button1.Text = "Patch";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
@@ -194,6 +193,7 @@ namespace EasyCrack
             this.button2.TabIndex = 12;
             this.button2.Text = "Help";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // progressBar1
             // 
@@ -204,6 +204,16 @@ namespace EasyCrack
             this.progressBar1.TabIndex = 13;
             this.progressBar1.Value = global::EasyCrack.Properties.Settings.Default.downprog;
             this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
+            // 
+            // fileSystemWatcher1
+            // 
+            this.fileSystemWatcher1.EnableRaisingEvents = true;
+            this.fileSystemWatcher1.SynchronizingObject = this;
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
             // 
             // EasyCrack
             // 
@@ -225,18 +235,18 @@ namespace EasyCrack
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.browse);
             this.HelpButton = true;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "EasyCrack";
             this.Text = "Easy Crack";
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         public System.Windows.Forms.Button browse;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label1;
@@ -250,6 +260,8 @@ namespace EasyCrack
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.IO.FileSystemWatcher fileSystemWatcher1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

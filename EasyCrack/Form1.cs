@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace EasyCrack
@@ -31,10 +32,10 @@ namespace EasyCrack
 
         private void browse_Click(object sender, EventArgs e)
         {
-            if(folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            if(openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                textBox1.Text = folderBrowserDialog1.SelectedPath;
-                game.gamePath = folderBrowserDialog1.SelectedPath;
+                textBox1.Text = openFileDialog1.FileName;
+                game.gamePath = openFileDialog1.FileName;
             }
         }
 
@@ -78,5 +79,20 @@ namespace EasyCrack
 
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string messageBoxText = "1. Select the folder where the game .exe file is located\n2. Go to http://steamdb.com and search your game.\n3. Enter the App ID from steamdb into Easy Crack.\n4. Enter player name, language and if you want to generate a mods folder.\n5. Click on \"Patch\" and watch the magic happen!\n\nFor more info please see: https://gitlab.com/Mr_Goldberg/goldberg_emulator";
+            string caption = "Help";
+            MessageBoxButton button = MessageBoxButton.OK;
+            MessageBoxImage icon = MessageBoxImage.Question;
+            MessageBoxResult result;
+
+            result = System.Windows.MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+        }
+
+        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+
+        }
     }
 }

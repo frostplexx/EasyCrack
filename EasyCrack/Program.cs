@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -31,12 +32,11 @@ namespace EasyCrack
 }
 
 public class Game{
-    public int complPerc = 0;
-    public string gamePath = "";
-    public string appID = "";
-    public string playerName = EasyCrack.Properties.Settings.Default.playername;
-    public bool createModsFolder = true;
-    public string language = "english";
+    public string gamePath = ""; //path to game.exe
+    public string appID = ""; //app id
+    public string playerName = EasyCrack.Properties.Settings.Default.playername; //player name
+    public bool createModsFolder = true; //if mods folder should be created
+    public string language = "english"; //language, default english
     public async void  crack()
     {
         //check if none of the inputs is wrong
@@ -61,8 +61,14 @@ public class Game{
             return;
         }
 
+        //removes the last element of the path because we dont need the file
+        List<String> pathArr = new List<String>(this.gamePath.Split(new string[] { "\\" }, StringSplitOptions.None));
+        pathArr.RemoveAt(pathArr.Count - 1);
+        this.gamePath = String.Join("\\", pathArr);
+
+        //list of files we want to copy from the emu folder
         string[] filesToCopy = new string[] { "steam_api64.dll", "steam_api.dll", "lobby_connect\\lobby_connect.exe"};
-        Console.WriteLine("AppID: " + this.appID + " Game Path: " + this.gamePath);
+
         //download file 
         string zipPath = this.gamePath + "\\emu.zip";
         var folderPath = await downloadCrack(zipPath);
@@ -75,25 +81,28 @@ public class Game{
             if (File.Exists(rootFilePath)) File.Delete(rootFilePath); //delete original file if its exits; 
             File.Copy(filePath, rootFilePath); //copy new file
         }
-        //generateInterfaces(this.gamePath + "\\steam_api.dll"); not yet implemented
+        generateInterfaces(this.gamePath + "\\steam_api.dll");
 
         //generate appID
         var appIdFile = File.CreateText(this.gamePath + "\\steam_appid.txt");
         appIdFile.WriteLine(this.appID);
         appIdFile.Close();
 
-        //generate other folder 
+        //generate other folders
         Directory.CreateDirectory(this.gamePath + "\\steam_settings");
         
         //create mods folder if ticked
         if(this.createModsFolder) Directory.CreateDirectory(this.gamePath + "\\steam_settings\\mods");
 
+        //set progress to 50%
         EasyCrack.Properties.Settings.Default.downprog = 50;
 
+        //create language file
         var langFile = File.CreateText(this.gamePath + "\\steam_settings\\force_language.txt");
         langFile.WriteLine(this.language);
         langFile.Close();
 
+        //create account name file
         var playerFile = File.CreateText(this.gamePath + "\\steam_settings\\force_account_name.txt");
         playerFile.WriteLine(this.playerName);
         playerFile.Close();
@@ -101,7 +110,7 @@ public class Game{
         //delete folder
         Directory.Delete(folderPath, true);
 
-        //100% full
+        //set progress to 100%
         EasyCrack.Properties.Settings.Default.downprog = 100;
 
         //Print success Message
@@ -142,14 +151,12 @@ public class Game{
         return folderPath;
     }
 
-
+    //generates the interfaces file 
+    //ported from https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/blob/master/generate_interfaces_file.cpp
     private bool generateInterfaces(string dllPath)
     {
         var outFile = File.CreateText(this.gamePath + "\\steam_interfaces.txt");
-        var tmpFile = File.CreateText(this.gamePath + "\\foo2.txt");
         var steamApiContents = File.ReadAllText(dllPath);
-        tmpFile.Write(steamApiContents);
-        tmpFile.Close();
         string[] interfaceNames = new string[] {"SteamClient",
                                                 "SteamGameServer",
                                                 "SteamGameServerStats",
@@ -175,20 +182,21 @@ public class Game{
                                                 "SteamMasterServerUpdater",
                                                 "STEAMVIDEO_INTERFACE_V"};
         foreach(var name in interfaceNames) {
-            findInInterface(outFile, steamApiContents, name);
+            findInInterface(outFile, steamApiContents, name + "\\d{3}");
         }
 
         if(findInInterface(outFile, steamApiContents, "STEAMCONTROLLER_INTERFACE_VERSION\\d{3}") == 0)
         {
             findInInterface(outFile, steamApiContents, "STEAMCONTROLLER_INTERFACE_VERSION");
         }
-
+        outFile.Close();
         return true;
     }
 
-    private int findInInterface(StreamWriter outFile, string fileContents, string intrface){
+    //part of generate interfaces
+    private uint findInInterface(StreamWriter outFile, string fileContents, string intrface){
         Regex interface_regex = new Regex(intrface);
-        int matches = 0;
+        uint matches = 0;
         foreach (var interf in interface_regex.Matches(fileContents))
         {
             
@@ -196,10 +204,10 @@ public class Game{
             outFile.WriteLine(match_str);
             ++matches;
         }
-
         return matches;
     }
 
+    //creates an error alert with a given message
     private void errorPopup(string message)
     {
         string messageBoxText = message;
@@ -210,4 +218,6 @@ public class Game{
 
         result = System.Windows.MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
     }
+
+
 }
