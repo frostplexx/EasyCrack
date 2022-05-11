@@ -2,14 +2,14 @@
 
 The easiest way to install the Mr_Goldberg steam emulator!
 
-##What is this? 
+## What is this? 
 This is a simple programm, that download and configures the Mr_Goldberg steam emulator for you.
 
-##Limitations
+## Limitations
 
 This works on clean steam files which dont have any drm other than steamworks. If your game has any other drm you have to remove it.
 
-##Usage
+## Usage
 
 1. Download the newest release with the button below.
 2. Open the .exe file of your game.
