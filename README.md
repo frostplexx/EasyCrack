@@ -10,7 +10,9 @@ This is a simple programm, that downloads and configures the Mr_Goldberg steam e
 This works on clean steam files which dont have any drm other than steamworks. If your game has any other drm you have to remove it.
 
 ## Download
-Download it from the release page [here](https://github.com/Frostplexx/EasyCrack/releases).
+Download the latest version here: 
+<!-- BEGIN LATEST DOWNLOAD BUTTON -->
+<!-- END LATEST DOWNLOAD BUTTON -->
 
 ## Usage
 
