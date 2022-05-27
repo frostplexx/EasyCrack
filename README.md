@@ -12,6 +12,7 @@ This works on clean steam files which dont have any drm other than steamworks. I
 ## Download
 Download the latest version here: 
 <!-- BEGIN LATEST DOWNLOAD BUTTON -->
+[![Download zip](https://custom-icon-badges.herokuapp.com/badge/-Download-blue?style=for-the-badge&logo=download&logoColor=white "Download zip")](https://github.com/frostplexx/EasyCrack/archive/v1.1.0.zip)
 <!-- END LATEST DOWNLOAD BUTTON -->
 
 ## Usage
@@ -23,5 +24,3 @@ Download the latest version here:
 5. You can freely choose a username and the language.
 6. Click patch and wait until the process it complete. 
 7. Your game should now be patched
-
-
