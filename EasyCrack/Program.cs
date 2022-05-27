@@ -1,17 +1,14 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using ScrapySharp.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
-
-
 namespace EasyCrack
 {
 
@@ -31,13 +28,20 @@ namespace EasyCrack
     }
 }
 
-public class Game{
+public class Game
+{
+    EasyCrack.EasyCrack form;
     public string gamePath = ""; //path to game.exe
     public string appID = ""; //app id
     public string playerName = EasyCrack.Properties.Settings.Default.playername; //player name
     public bool createModsFolder = true; //if mods folder should be created
     public string language = "english"; //language, default english
-    public async void  crack()
+
+    public Game(EasyCrack.EasyCrack form)
+    {
+        this.form = form;
+    }
+    public async void crack()
     {
         //check if none of the inputs is wrong
         if (this.gamePath.Equals(""))
@@ -67,7 +71,7 @@ public class Game{
         this.gamePath = String.Join("\\", pathArr);
 
         //list of files we want to copy from the emu folder
-        string[] filesToCopy = new string[] { "steam_api64.dll", "steam_api.dll", "lobby_connect\\lobby_connect.exe"};
+        string[] filesToCopy = new string[] { "steam_api64.dll", "steam_api.dll", "lobby_connect\\lobby_connect.exe" };
 
         //download file 
         string zipPath = this.gamePath + "\\emu.zip";
@@ -90,12 +94,12 @@ public class Game{
 
         //generate other folders
         Directory.CreateDirectory(this.gamePath + "\\steam_settings");
-        
+
         //create mods folder if ticked
-        if(this.createModsFolder) Directory.CreateDirectory(this.gamePath + "\\steam_settings\\mods");
+        if (this.createModsFolder) Directory.CreateDirectory(this.gamePath + "\\steam_settings\\mods");
 
         //set progress to 50%
-        EasyCrack.Properties.Settings.Default.downprog = 50;
+        form.progressBar1.Value = 50;
 
         //create language file
         var langFile = File.CreateText(this.gamePath + "\\steam_settings\\force_language.txt");
@@ -111,7 +115,7 @@ public class Game{
         Directory.Delete(folderPath, true);
 
         //set progress to 100%
-        EasyCrack.Properties.Settings.Default.downprog = 100;
+        form.progressBar1.Value = 100;
 
         //Print success Message
         string messageBoxText = "Successfully installed the Steam Emulator!";
@@ -121,13 +125,14 @@ public class Game{
         MessageBoxResult result;
 
         result = System.Windows.MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+        form.progressBar1.Value = 0;
     }
 
     // Event to track the progress
     private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
         Console.WriteLine(e.ProgressPercentage);
-        EasyCrack.Properties.Settings.Default.downprog = e.ProgressPercentage;
+        form.progressBar1.Value = e.ProgressPercentage;
     }
 
     //download and extract the emu
@@ -149,6 +154,55 @@ public class Game{
         ZipFile.ExtractToDirectory(zipPath, folderPath);
         File.Delete(zipPath);
         return folderPath;
+    }
+
+    public void SearchGame(string game)
+    {
+        string searchURL = "https://store.steampowered.com/search/?term=" + game.Replace(" ", "+");
+        HtmlWeb web;
+        HtmlAgilityPack.HtmlDocument doc;
+        try
+        {
+            web = new HtmlWeb();
+            doc = web.Load(searchURL);
+        }
+        catch (Exception e)
+        {
+            errorPopup("Could not connect to Steam! Make sure you are connected to the Internet.\n\n\n\n" + e);
+            return;
+        }
+        var games = doc.DocumentNode.CssSelect("#search_resultsRows");
+        string gameTitle = String.Empty;
+        string gameID = String.Empty;
+        //select first game 
+        foreach (var item in games)
+        {
+            gameTitle = item.CssSelect("span.title").First().InnerText;
+
+
+            var gameAttributes = item.CssSelect("a").First().Attributes;
+            foreach (var attribute in gameAttributes)
+            {
+                if (attribute.Name.Equals("data-ds-appid"))
+                {
+                    gameID = attribute.Value;
+                    break;
+                }
+            }
+        }
+        if (gameTitle.Equals(String.Empty) || gameID.Equals(String.Empty))
+        {
+            string noGameMsg = "Could not find the Game. Make sure you wrote it's name correctly!";
+            errorPopup(noGameMsg);
+
+        }
+        else
+        {
+            form.appid.Text = gameID;
+            form.textBox3.Text = gameTitle;
+        }
+
+
     }
 
     //generates the interfaces file 
@@ -181,11 +235,12 @@ public class Game{
                                                 "SteamController",
                                                 "SteamMasterServerUpdater",
                                                 "STEAMVIDEO_INTERFACE_V"};
-        foreach(var name in interfaceNames) {
+        foreach (var name in interfaceNames)
+        {
             findInInterface(outFile, steamApiContents, name + "\\d{3}");
         }
 
-        if(findInInterface(outFile, steamApiContents, "STEAMCONTROLLER_INTERFACE_VERSION\\d{3}") == 0)
+        if (findInInterface(outFile, steamApiContents, "STEAMCONTROLLER_INTERFACE_VERSION\\d{3}") == 0)
         {
             findInInterface(outFile, steamApiContents, "STEAMCONTROLLER_INTERFACE_VERSION");
         }
@@ -194,12 +249,13 @@ public class Game{
     }
 
     //part of generate interfaces
-    private uint findInInterface(StreamWriter outFile, string fileContents, string intrface){
+    private uint findInInterface(StreamWriter outFile, string fileContents, string intrface)
+    {
         Regex interface_regex = new Regex(intrface);
         uint matches = 0;
         foreach (var interf in interface_regex.Matches(fileContents))
         {
-            
+
             string match_str = interf.ToString();
             outFile.WriteLine(match_str);
             ++matches;
