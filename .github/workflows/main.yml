@@ -21,7 +21,7 @@ jobs:
 
       - name: Readme Download Button Action
         env:
-          GITHUB_USER: "Frostplexx"
+          GITHUB_USER: "frostplexx"
           REPO: "EasyCrack"
           FORMAT: "zip"
           VERSION: "${{ steps.get-latest-release.outputs.tag_name }}"
