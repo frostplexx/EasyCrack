@@ -107,5 +107,10 @@ namespace EasyCrack
         {
             game.updateAppID(comboBox2.Items[comboBox2.SelectedIndex].ToString(), searchedGames);
         }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

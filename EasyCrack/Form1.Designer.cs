@@ -51,6 +51,7 @@ namespace EasyCrack
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -117,6 +118,7 @@ namespace EasyCrack
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.comboBox2);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.button3);
@@ -124,9 +126,9 @@ namespace EasyCrack
             this.groupBox1.Controls.Add(this.appid);
             this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.browse);
-            this.groupBox1.Location = new System.Drawing.Point(9, 12);
+            this.groupBox1.Location = new System.Drawing.Point(9, 7);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(287, 132);
+            this.groupBox1.Size = new System.Drawing.Size(287, 137);
             this.groupBox1.TabIndex = 19;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Game Setup";
@@ -134,16 +136,16 @@ namespace EasyCrack
             // comboBox2
             // 
             this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(9, 71);
+            this.comboBox2.Location = new System.Drawing.Point(6, 80);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(188, 21);
+            this.comboBox2.Size = new System.Drawing.Size(195, 21);
             this.comboBox2.TabIndex = 27;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 57);
+            this.label7.Location = new System.Drawing.Point(3, 66);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(120, 13);
             this.label7.TabIndex = 26;
@@ -152,9 +154,9 @@ namespace EasyCrack
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(203, 73);
+            this.button3.Location = new System.Drawing.Point(203, 80);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(78, 20);
+            this.button3.Size = new System.Drawing.Size(78, 21);
             this.button3.TabIndex = 24;
             this.button3.Text = "Search";
             this.button3.UseVisualStyleBackColor = true;
@@ -163,7 +165,7 @@ namespace EasyCrack
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 101);
+            this.label2.Location = new System.Drawing.Point(7, 110);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(76, 13);
             this.label2.TabIndex = 22;
@@ -171,25 +173,25 @@ namespace EasyCrack
             // 
             // appid
             // 
-            this.appid.Location = new System.Drawing.Point(88, 98);
+            this.appid.Location = new System.Drawing.Point(89, 107);
             this.appid.Name = "appid";
-            this.appid.Size = new System.Drawing.Size(193, 20);
+            this.appid.Size = new System.Drawing.Size(192, 20);
             this.appid.TabIndex = 21;
             this.appid.TextChanged += new System.EventHandler(this.appid_TextChanged_1);
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(6, 19);
+            this.textBox1.Location = new System.Drawing.Point(6, 43);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(191, 20);
+            this.textBox1.Size = new System.Drawing.Size(195, 20);
             this.textBox1.TabIndex = 20;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged_1);
             // 
             // browse
             // 
-            this.browse.Location = new System.Drawing.Point(203, 19);
+            this.browse.Location = new System.Drawing.Point(203, 42);
             this.browse.Name = "browse";
-            this.browse.Size = new System.Drawing.Size(78, 20);
+            this.browse.Size = new System.Drawing.Size(78, 21);
             this.browse.TabIndex = 19;
             this.browse.Text = "Browse Files";
             this.browse.UseVisualStyleBackColor = true;
@@ -214,7 +216,7 @@ namespace EasyCrack
             this.checkBox1.AutoSize = true;
             this.checkBox1.Checked = true;
             this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(6, 70);
+            this.checkBox1.Location = new System.Drawing.Point(10, 70);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(118, 17);
             this.checkBox1.TabIndex = 16;
@@ -225,11 +227,12 @@ namespace EasyCrack
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(136, 27);
+            this.label3.Location = new System.Drawing.Point(146, 27);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(55, 13);
             this.label3.TabIndex = 15;
             this.label3.Text = "Language";
+            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // comboBox1
             // 
@@ -264,9 +267,9 @@ namespace EasyCrack
             "turkish",
             "ukrainian",
             "vietnamese"});
-            this.comboBox1.Location = new System.Drawing.Point(139, 43);
+            this.comboBox1.Location = new System.Drawing.Point(149, 43);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(142, 21);
+            this.comboBox1.Size = new System.Drawing.Size(132, 21);
             this.comboBox1.Sorted = true;
             this.comboBox1.TabIndex = 14;
             this.comboBox1.Text = "english";
@@ -274,7 +277,7 @@ namespace EasyCrack
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 28);
+            this.label4.Location = new System.Drawing.Point(6, 28);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(111, 13);
             this.label4.TabIndex = 13;
@@ -284,12 +287,21 @@ namespace EasyCrack
             // textBox2
             // 
             this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::EasyCrack.Properties.Settings.Default, "playername", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.textBox2.Location = new System.Drawing.Point(6, 44);
+            this.textBox2.Location = new System.Drawing.Point(9, 44);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(127, 20);
+            this.textBox2.Size = new System.Drawing.Size(134, 20);
             this.textBox2.TabIndex = 12;
             this.textBox2.Text = global::EasyCrack.Properties.Settings.Default.playername;
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 27);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(93, 13);
+            this.label6.TabIndex = 28;
+            this.label6.Text = "Path to game .exe";
             // 
             // EasyCrack
             // 
@@ -342,6 +354,7 @@ namespace EasyCrack
         public System.Windows.Forms.TextBox appid;
         public System.Windows.Forms.ProgressBar progressBar1;
         public System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.Label label6;
     }
 }
 
