@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Forms;
@@ -8,6 +9,7 @@ namespace EasyCrack
     public partial class EasyCrack : Form
     {
         public Game game;
+        Dictionary<string, string> searchedGames = new Dictionary<string, string>();
         public EasyCrack()
         {
             InitializeComponent();
@@ -88,7 +90,7 @@ namespace EasyCrack
 
         private void button3_Click(object sender, EventArgs e)
         {
-            game.SearchGame(textBox3.Text);
+            searchedGames = game.SearchGame(comboBox2.Text);
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)
@@ -99,6 +101,11 @@ namespace EasyCrack
         private void label7_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            game.updateAppID(comboBox2.Items[comboBox2.SelectedIndex].ToString(), searchedGames);
         }
     }
 }

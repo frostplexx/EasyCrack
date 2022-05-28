@@ -124,7 +124,7 @@ public class Game
         MessageBoxImage icon = MessageBoxImage.Information;
         MessageBoxResult result;
 
-        result = System.Windows.MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+        result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
         form.progressBar1.Value = 0;
     }
 
@@ -156,7 +156,7 @@ public class Game
         return folderPath;
     }
 
-    public void SearchGame(string game)
+    public Dictionary<string, string> SearchGame(string game)
     {
         string searchURL = "https://store.steampowered.com/search/?term=" + game.Replace(" ", "+");
         HtmlWeb web;
@@ -169,40 +169,76 @@ public class Game
         catch (Exception e)
         {
             errorPopup("Could not connect to Steam! Make sure you are connected to the Internet.\n\n\n\n" + e);
-            return;
+            return null;
         }
         var games = doc.DocumentNode.CssSelect("#search_resultsRows");
-        string gameTitle = String.Empty;
-        string gameID = String.Empty;
         //select first game 
+        //clear combobox
+        form.comboBox2.Items.Clear();
+        Dictionary<string, string> searchedGames = new Dictionary<string, string>();
         foreach (var item in games)
         {
-            gameTitle = item.CssSelect("span.title").First().InnerText;
 
 
-            var gameAttributes = item.CssSelect("a").First().Attributes;
-            foreach (var attribute in gameAttributes)
+            //add all appIDs to the appIDS array
+            var gamesA = item.CssSelect("a");
+            string[] appIDs = new string[gamesA.Count()];
+            int ind = 0;
+            foreach (var gameA in gamesA)
             {
-                if (attribute.Name.Equals("data-ds-appid"))
+                foreach (var attribute in gameA.Attributes)
                 {
-                    gameID = attribute.Value;
-                    break;
+                    if (attribute.Name.Equals("data-ds-appid"))
+                    {
+                        appIDs[ind] = attribute.Value;
+                        break;
+                    }
                 }
+                ind++;
+            }
+
+            //get all the titles of the searched games an put them into an array
+            var gameSpans = item.CssSelect("span.title");
+            string[] gameTitles = new string[gameSpans.Count()];
+            int inde = 0;
+            foreach (var title in gameSpans)
+            {
+                gameTitles[inde] = title.InnerText;
+                inde++;
+            }
+
+            foreach (var id in appIDs)
+            {
+
+                if (!String.IsNullOrEmpty(id)) //filter out bundles as they do not have a appID
+                {
+                    form.comboBox2.Items.Add(gameTitles[Array.IndexOf(appIDs, id)]);
+                    Console.WriteLine(gameTitles[Array.IndexOf(appIDs, id)] + ": " + id);
+                    searchedGames.Add(gameTitles[Array.IndexOf(appIDs, id)], id);
+                }
+
             }
         }
-        if (gameTitle.Equals(String.Empty) || gameID.Equals(String.Empty))
-        {
-            string noGameMsg = "Could not find the Game. Make sure you wrote it's name correctly!";
-            errorPopup(noGameMsg);
 
+        //fill the combobox and appid box with the first search result
+        if (!(searchedGames.Count() == 0))
+        {
+            form.appid.Text = searchedGames.First().Value;
+            form.comboBox2.Text = searchedGames.First().Key;
         }
         else
         {
-            form.appid.Text = gameID;
-            form.textBox3.Text = gameTitle;
+            errorPopup("Could not find Game! Are you sure you wrote it correctly?");
         }
+        return searchedGames;
+    }
 
-
+    public void updateAppID(string newItem, Dictionary<string, string> searchedGames)
+    {
+        if (searchedGames.ContainsKey(newItem))
+        {
+            form.appid.Text = searchedGames[newItem];
+        }
     }
 
     //generates the interfaces file 

@@ -38,8 +38,8 @@ namespace EasyCrack
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
-            this.textBox3 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.appid = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -50,7 +50,7 @@ namespace EasyCrack
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -117,9 +117,9 @@ namespace EasyCrack
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboBox2);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.button3);
-            this.groupBox1.Controls.Add(this.textBox3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.appid);
             this.groupBox1.Controls.Add(this.textBox1);
@@ -131,6 +131,16 @@ namespace EasyCrack
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Game Setup";
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(6, 57);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(120, 13);
+            this.label7.TabIndex = 26;
+            this.label7.Text = "Search Game on Steam";
+            this.label7.Click += new System.EventHandler(this.label7_Click);
+            // 
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(203, 73);
@@ -140,14 +150,6 @@ namespace EasyCrack
             this.button3.Text = "Search";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // textBox3
-            // 
-            this.textBox3.Location = new System.Drawing.Point(6, 73);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(191, 20);
-            this.textBox3.TabIndex = 23;
-            this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
             // 
             // label2
             // 
@@ -280,15 +282,14 @@ namespace EasyCrack
             this.textBox2.Text = global::EasyCrack.Properties.Settings.Default.playername;
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
-            // label7
+            // comboBox2
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 57);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(120, 13);
-            this.label7.TabIndex = 26;
-            this.label7.Text = "Search Game on Steam";
-            this.label7.Click += new System.EventHandler(this.label7_Click);
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(9, 71);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(188, 21);
+            this.comboBox2.TabIndex = 27;
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // EasyCrack
             // 
@@ -338,9 +339,9 @@ namespace EasyCrack
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label7;
-        public System.Windows.Forms.TextBox textBox3;
         public System.Windows.Forms.TextBox appid;
         public System.Windows.Forms.ProgressBar progressBar1;
+        public System.Windows.Forms.ComboBox comboBox2;
     }
 }
 
