@@ -22,5 +22,5 @@ This works on clean steam files which dont have any drm other than steamworks. I
 3. Search your game in Easy Crack or go to https://steamdb.com and search your game there.
 4. Copy the App ID into Easy Crack if you choose to search it manually.
 5. You can freely choose a username and the language.
-6. Click patch and wait until the process it complete. 
+6. Click patch and wait until the process is complete. 
 7. Your game should now be patched
