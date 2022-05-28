@@ -9,6 +9,8 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+//How to sign: signtool sign /f "frostplexx.pfx" /fd SHA256 /p frostplexx "D:\EasyCrack.exe"
+//more info: https://docs.google.com/document/d/1e5hbWLSDe71jfEtzUiVqKbv5LO8KUBlD37oitckn3z0/edit#
 namespace EasyCrack
 {
 
