@@ -75,6 +75,9 @@ public class Game
         //list of files we want to copy from the emu folder
         string[] filesToCopy = new string[] { "steam_api64.dll", "steam_api.dll", "lobby_connect\\lobby_connect.exe" };
 
+        //check for drm by querying steam again
+        bool drm = checkForDRM();
+
         //download file 
         string zipPath = this.gamePath + "\\emu.zip";
         var folderPath = await downloadCrack(zipPath);
@@ -233,6 +236,56 @@ public class Game
             errorPopup("Could not find Game! Are you sure you wrote it correctly?");
         }
         return searchedGames;
+    }
+
+    public bool checkForDRM()
+    {
+        string url = "https://store.steampowered.com/app/" + appID;
+        
+        HtmlWeb web;
+        HtmlAgilityPack.HtmlDocument doc;
+        try
+        {
+            CookieContainer cookieContainer = new CookieContainer();
+            web = new HtmlWeb();
+            //handle cookies
+            web.UseCookies = true;
+            web.PreRequest = new HtmlWeb.PreRequestHandler(OnPreRequest2);
+            web.PostResponse = new HtmlWeb.PostResponseHandler(OnAfterResponse2);
+            //load url
+            doc = web.Load(url);
+
+            //more cookie stuff
+            bool OnPreRequest2(HttpWebRequest request)
+            {
+                cookieContainer.Add(new Cookie("birthtime", "568022401") { Domain = new Uri(url).Host});
+                request.CookieContainer = cookieContainer;
+                return true;
+            }
+            void OnAfterResponse2(HttpWebRequest request, HttpWebResponse response)
+            {
+                //do nothing
+            }
+        }
+        catch (Exception e)
+        {
+            errorPopup("Could not connect to Steam! Make sure you are connected to the Internet.\n\n\n\n" + e);
+            return false;
+        }
+        var hasDRM = doc.DocumentNode.CssSelect(".DRM_notice");
+        if(hasDRM.Count() > 0)
+        {
+            string messageBoxText = "DRM Detected!\n" + hasDRM.First().InnerText.Trim() + "\nThe game will still be patched, but may not work without an additional crack!";
+            string caption = "DRM Found";
+            MessageBoxButton button = MessageBoxButton.OK;
+            MessageBoxImage icon = MessageBoxImage.Warning;
+            MessageBoxResult result;
+            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+            return true;
+        } else
+        {
+            return false;
+        }
     }
 
     public void updateAppID(string newItem, Dictionary<string, string> searchedGames)

@@ -10,6 +10,8 @@ namespace EasyCrack
     {
         public Game game;
         Dictionary<string, string> searchedGames = new Dictionary<string, string>();
+        string usernamePlaceHolder = "Player";
+        string gameSearchPlaceHolder = "Search for game here...";
         public EasyCrack()
         {
             InitializeComponent();
@@ -111,6 +113,38 @@ namespace EasyCrack
         private void label3_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void comboBox2_Enter(object sender, EventArgs e)
+        {
+            if(comboBox2.Text.Equals(gameSearchPlaceHolder))
+            {
+                comboBox2.Text = "";
+            }
+        }
+
+        private void comboBox2_Leave(object sender, EventArgs e)
+        {
+            if (comboBox2.Text.Equals(""))
+            {
+                comboBox2.Text = gameSearchPlaceHolder;
+            }
+        }
+
+        private void textBox2_Enter(object sender, EventArgs e)
+        {
+            if (textBox2.Text.Equals(usernamePlaceHolder))
+            {
+                textBox2.Text = ""; 
+            }
+        }
+
+        private void textBox2_Leave(object sender, EventArgs e)
+        {
+            if (textBox2.Text.Equals(""))
+            {
+                textBox2.Text = usernamePlaceHolder;
+            }
         }
     }
 }
