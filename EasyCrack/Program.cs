@@ -9,6 +9,8 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
+using MessageBox = System.Windows.MessageBox;
 //How to sign: signtool sign /f "frostplexx.pfx" /fd SHA256 /p frostplexx "D:\EasyCrack.exe"
 //more info: https://docs.google.com/document/d/1e5hbWLSDe71jfEtzUiVqKbv5LO8KUBlD37oitckn3z0/edit#
 namespace EasyCrack
@@ -45,25 +47,37 @@ public class Game
     }
     public async void crack()
     {
+        //disable the button
+        form.button1.Enabled = false;
+        //set cursor to wait
+        form.Cursor = Cursors.WaitCursor;
         //check if none of the inputs is wrong
         if (this.gamePath.Equals(""))
         {
             errorPopup("Path to Game Folder cannot be empty!");
+            form.button1.Enabled = true;
+            form.Cursor = Cursors.Default;
             return;
         }
         if (this.appID.Equals(""))
         {
             errorPopup("App ID cannot be empty!");
+            form.button1.Enabled = true;
+            form.Cursor = Cursors.Default;
             return;
         }
         if (this.playerName.Equals(""))
         {
             errorPopup("Player Name cannot be empty!");
+            form.button1.Enabled = true;
+            form.Cursor = Cursors.Default;
             return;
         }
         if (this.language.Equals(""))
         {
             errorPopup("Language cannot be empty!");
+            form.button1.Enabled = true;
+            form.Cursor = Cursors.Default;
             return;
         }
 
@@ -90,7 +104,7 @@ public class Game
             if (File.Exists(rootFilePath)) File.Delete(rootFilePath); //delete original file if its exits; 
             File.Copy(filePath, rootFilePath); //copy new file
         }
-        generateInterfaces(this.gamePath + "\\steam_api.dll");
+        generateInterfaces(gamePath + "\\steam_api.dll");
 
         //generate appID
         var appIdFile = File.CreateText(this.gamePath + "\\steam_appid.txt");
@@ -131,6 +145,9 @@ public class Game
 
         result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
         form.progressBar1.Value = 0;
+        //enable button again
+        form.button1.Enabled = true;
+        form.Cursor = Cursors.Default;
     }
 
     // Event to track the progress
@@ -163,6 +180,8 @@ public class Game
 
     public Dictionary<string, string> SearchGame(string game)
     {
+        //set cursor to loading
+        form.Cursor = Cursors.WaitCursor;
         string searchURL = "https://store.steampowered.com/search/?term=" + game.Replace(" ", "+");
         HtmlWeb web;
         HtmlAgilityPack.HtmlDocument doc;
@@ -235,6 +254,8 @@ public class Game
         {
             errorPopup("Could not find Game! Are you sure you wrote it correctly?");
         }
+        //set cursor to normal
+        form.Cursor = Cursors.Default;
         return searchedGames;
     }
 
@@ -275,7 +296,7 @@ public class Game
         var hasDRM = doc.DocumentNode.CssSelect(".DRM_notice");
         if(hasDRM.Count() > 0)
         {
-            string messageBoxText = "DRM Detected!\n" + hasDRM.First().InnerText.Trim() + "\nThe game will still be patched, but may not work without an additional crack!";
+            string messageBoxText = "DRM Detected!\n\n" + hasDRM.First().InnerText.Trim().Replace("&nbsp;", " ") + "\n\nThe game will still be patched, but may not work without additional cracks!";
             string caption = "DRM Found";
             MessageBoxButton button = MessageBoxButton.OK;
             MessageBoxImage icon = MessageBoxImage.Warning;

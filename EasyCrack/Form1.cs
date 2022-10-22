@@ -146,5 +146,13 @@ namespace EasyCrack
                 textBox2.Text = usernamePlaceHolder;
             }
         }
+
+        private void comboBox2_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                button3.PerformClick();
+            }
+        }
     }
 }
