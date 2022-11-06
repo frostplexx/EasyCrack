@@ -3,7 +3,7 @@
 The easiest way to install the Mr_Goldberg steam emulator!
 
 ## What is this? 
-This is a simple programm, that downloads and configures the Mr_Goldberg steam emulator for you.
+This is a simple program, that downloads and configures the Mr_Goldberg steam emulator for you.
 
 ![image](https://user-images.githubusercontent.com/62436912/200173043-a54bdc98-eabf-4373-ad1b-4d2d09d6e6f6.png)
 
