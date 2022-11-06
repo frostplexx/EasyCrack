@@ -320,6 +320,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\xmark-solid.png" />
+    <None Include="Resources\CloseButton.bmp" />
+    <None Include="Resources\xmark-solid.bmp" />
+    <None Include="Resources\picture.bmp" />
+    <None Include="Resources\picture%281%29.bmp" />
     <Content Include="Untitled.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

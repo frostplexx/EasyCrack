@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Forms;
-
+using Application = System.Windows.Forms.Application;
 namespace EasyCrack
 {
     public partial class EasyCrack : Form
     {
+        bool mouseDown;
+        private System.Drawing.Point offset;
+
+
         public Game game;
         Dictionary<string, string> searchedGames = new Dictionary<string, string>();
         string usernamePlaceHolder = "Player";
@@ -117,7 +121,7 @@ namespace EasyCrack
 
         private void comboBox2_Enter(object sender, EventArgs e)
         {
-            if(comboBox2.Text.Equals(gameSearchPlaceHolder))
+            if (comboBox2.Text.Equals(gameSearchPlaceHolder))
             {
                 comboBox2.Text = "";
             }
@@ -135,7 +139,7 @@ namespace EasyCrack
         {
             if (textBox2.Text.Equals(usernamePlaceHolder))
             {
-                textBox2.Text = ""; 
+                textBox2.Text = "";
             }
         }
 
@@ -153,6 +157,84 @@ namespace EasyCrack
             {
                 button3.PerformClick();
             }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            //move the window to mouse pos
+            this.Location = new System.Drawing.Point(Cursor.Position.X - this.Width / 2, Cursor.Position.Y - this.Height / 2);
+        }
+
+        private void MouseDownEvent(object sender, MouseEventArgs e)
+        {
+            offset.X = e.X;
+            offset.Y = e.Y;
+            mouseDown = true;
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void fileSystemWatcher1_Changed(object sender, System.IO.FileSystemEventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void MouseMoveEvent(object sender, MouseEventArgs e)
+        {
+            if (mouseDown == true)
+            {
+                System.Drawing.Point curScreenPos = PointToScreen(e.Location);
+                Location = new System.Drawing.Point(curScreenPos.X - offset.X, curScreenPos.Y - offset.Y);
+
+            }
+        }
+
+        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        {
+            mouseDown = false;
         }
     }
 }
