@@ -10,9 +10,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
+using EasyCrack;
 using MessageBox = System.Windows.MessageBox;
 //How to sign: signtool sign /f "frostplexx.pfx" /fd SHA256 /p frostplexx "D:\EasyCrack.exe"
 //more info: https://docs.google.com/document/d/1e5hbWLSDe71jfEtzUiVqKbv5LO8KUBlD37oitckn3z0/edit#
+
 namespace EasyCrack
 {
 
@@ -37,7 +39,9 @@ public class Game
     public string playerName = EasyCrack.Properties.Settings.Default.playername; //player name
     public bool createModsFolder = true; //if mods folder should be created
     public string language = "english"; //language, default english
-
+    private Messages messages = new Messages();
+    public SteamParser steamParser = new SteamParser();
+    public Crack cracker = new Crack();
     public Game(EasyCrack.EasyCrack form)
     {
         this.form = form;
@@ -49,30 +53,30 @@ public class Game
         //set cursor to wait
         form.Cursor = Cursors.WaitCursor;
         //check if none of the inputs is wrong
-        if (this.gamePath.Equals(""))
+        if (gamePath.Equals(""))
         {
-            errorPopup("Path to Game Folder cannot be empty!");
+            messages.errorPopup("Path to Game Folder cannot be empty!");
             form.button1.Enabled = true;
             form.Cursor = Cursors.Default;
             return;
         }
-        if (this.appID.Equals(""))
+        if (appID.Equals(""))
         {
-            errorPopup("App ID cannot be empty!");
+            messages.errorPopup("App ID cannot be empty!");
             form.button1.Enabled = true;
             form.Cursor = Cursors.Default;
             return;
         }
-        if (this.playerName.Equals(""))
+        if (playerName.Equals(""))
         {
-            errorPopup("Player Name cannot be empty!");
+            messages.errorPopup("Player Name cannot be empty!");
             form.button1.Enabled = true;
             form.Cursor = Cursors.Default;
             return;
         }
-        if (this.language.Equals(""))
+        if (language.Equals(""))
         {
-            errorPopup("Language cannot be empty!");
+            messages.errorPopup("Language cannot be empty!");
             form.button1.Enabled = true;
             form.Cursor = Cursors.Default;
             return;
@@ -81,51 +85,26 @@ public class Game
         //removes the last element of the path because we dont need the file
         List<String> pathArr = new List<String>(this.gamePath.Split(new string[] { "\\" }, StringSplitOptions.None));
         pathArr.RemoveAt(pathArr.Count - 1);
-        this.gamePath = String.Join("\\", pathArr);
+        gamePath = String.Join("\\", pathArr);
 
-        //list of files we want to copy from the emu folder
-        string[] filesToCopy = new string[] { "steam_api64.dll", "steam_api.dll", "lobby_connect\\lobby_connect.exe" };
+        cracker.setPlayerName(playerName);
+        cracker.setLanguage(form.comboBox1.Text);
+        cracker.setAppID(appID);
+        cracker.setGamePath(gamePath);
+        cracker.setCreateModsFolder(createModsFolder);
 
+        //download the emulator files
+        string folderPath = await cracker.downloadEmu(prog: form.progressBar1);
+
+
+        steamParser.setAppID(appID);
         //check for drm by querying steam again
-        bool drm = checkForDRM();
+        steamParser.checkForDRM();
 
-        //download file 
-        string zipPath = this.gamePath + "\\emu.zip";
-        var folderPath = await downloadCrack(zipPath);
-        //copy the relevant files to the root of the game
-        foreach (var file in filesToCopy)
-        {
-            var filePath = folderPath + "\\" + file;
-            var rootFilePath = this.gamePath + "\\" + file;
-            if (file.Contains("\\")) rootFilePath = this.gamePath + "\\" + file.Split(new string[] { "\\" }, StringSplitOptions.None)[1]; //if the file contains a path only use the filename, so it copies to the root of the game folder
-            if (File.Exists(rootFilePath)) File.Delete(rootFilePath); //delete original file if its exits; 
-            File.Copy(filePath, rootFilePath); //copy new file
-        }
         generateInterfaces(gamePath + "\\steam_api.dll");
 
-        //generate appID
-        var appIdFile = File.CreateText(this.gamePath + "\\steam_appid.txt");
-        appIdFile.WriteLine(this.appID);
-        appIdFile.Close();
-
-        //generate other folders
-        Directory.CreateDirectory(this.gamePath + "\\steam_settings");
-
-        //create mods folder if ticked
-        if (this.createModsFolder) Directory.CreateDirectory(this.gamePath + "\\steam_settings\\mods");
-
-        //set progress to 50%
-        form.progressBar1.Value = 50;
-
-        //create language file
-        var langFile = File.CreateText(this.gamePath + "\\steam_settings\\force_language.txt");
-        langFile.WriteLine(this.language);
-        langFile.Close();
-
-        //create account name file
-        var playerFile = File.CreateText(this.gamePath + "\\steam_settings\\force_account_name.txt");
-        playerFile.WriteLine(this.playerName);
-        playerFile.Close();
+        //create the files with the options
+        cracker.createFiles(form.progressBar1);
 
         //delete folder
         Directory.Delete(folderPath, true);
@@ -133,184 +112,24 @@ public class Game
         //set progress to 100%
         form.progressBar1.Value = 100;
 
-        //Print success Message
-        string messageBoxText = "Successfully installed the Steam Emulator!";
-        string caption = "Success";
-        MessageBoxButton button = MessageBoxButton.OK;
-        MessageBoxImage icon = MessageBoxImage.Information;
-        MessageBoxResult result;
+        messages.successMessageBox();
 
-        result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
         form.progressBar1.Value = 0;
         //enable button again
         form.button1.Enabled = true;
         form.Cursor = Cursors.Default;
     }
 
-    // Event to track the progress
-    private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+    public void updateLanguage(string lang)
     {
-        Console.WriteLine(e.ProgressPercentage);
-        form.progressBar1.Value = e.ProgressPercentage;
-    }
-
-    //download and extract the emu
-    private async Task<string> downloadCrack(string zipPath)
-    {
-        var folderPath = this.gamePath + "\\emu_tmp";
-        if (Directory.Exists(folderPath)) return folderPath; //if the directory already exists, return it
-        if (File.Exists(zipPath)) File.Delete(zipPath);
-        using (WebClient wc = new WebClient())
-        {
-            wc.DownloadProgressChanged += wc_DownloadProgressChanged;
-            await wc.DownloadFileTaskAsync(
-                // Param1 = Link of file
-                new System.Uri("https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/2426823199/artifacts/download"),
-                // Param2 = Path to save
-                zipPath
-            );
-        }
-        ZipFile.ExtractToDirectory(zipPath, folderPath);
-        File.Delete(zipPath);
-        return folderPath;
-    }
-
-    public Dictionary<string, string> SearchGame(string game)
-    {
-        //set cursor to loading
-        form.Cursor = Cursors.WaitCursor;
-        string searchURL = "https://store.steampowered.com/search/?term=" + game.Replace(" ", "+");
-        HtmlWeb web;
-        HtmlAgilityPack.HtmlDocument doc;
-        try
-        {
-            web = new HtmlWeb();
-            doc = web.Load(searchURL);
-        }
-        catch (Exception e)
-        {
-            errorPopup("Could not connect to Steam! Make sure you are connected to the Internet.\n\n\n\n" + e);
-            return null;
-        }
-        var games = doc.DocumentNode.CssSelect("#search_resultsRows");
-        //select first game 
-        //clear combobox
-        form.comboBox2.Items.Clear();
-        Dictionary<string, string> searchedGames = new Dictionary<string, string>();
-        foreach (var item in games)
-        {
-
-
-            //add all appIDs to the appIDS array
-            var gamesA = item.CssSelect("a");
-            string[] appIDs = new string[gamesA.Count()];
-            int ind = 0;
-            foreach (var gameA in gamesA)
-            {
-                foreach (var attribute in gameA.Attributes)
-                {
-                    if (attribute.Name.Equals("data-ds-appid"))
-                    {
-                        appIDs[ind] = attribute.Value;
-                        break;
-                    }
-                }
-                ind++;
-            }
-
-            //get all the titles of the searched games an put them into an array
-            var gameSpans = item.CssSelect("span.title");
-            string[] gameTitles = new string[gameSpans.Count()];
-            int inde = 0;
-            foreach (var title in gameSpans)
-            {
-                gameTitles[inde] = title.InnerText;
-                inde++;
-            }
-
-            foreach (var id in appIDs)
-            {
-
-                if (!String.IsNullOrEmpty(id)) //filter out bundles as they do not have a appID
-                {
-                    form.comboBox2.Items.Add(gameTitles[Array.IndexOf(appIDs, id)]);
-                    Console.WriteLine(gameTitles[Array.IndexOf(appIDs, id)] + ": " + id);
-                    searchedGames.Add(gameTitles[Array.IndexOf(appIDs, id)], id);
-                }
-
-            }
-        }
-
-        //fill the combobox and appid box with the first search result
-        if (!(searchedGames.Count() == 0))
-        {
-            form.appid.Text = searchedGames.First().Value;
-            form.comboBox2.Text = searchedGames.First().Key;
-        }
-        else
-        {
-            errorPopup("Could not find Game! Are you sure you wrote it correctly?");
-        }
-        //set cursor to normal
-        form.Cursor = Cursors.Default;
-        return searchedGames;
-    }
-
-    public bool checkForDRM()
-    {
-        string url = "https://store.steampowered.com/app/" + appID;
-        
-        HtmlWeb web;
-        HtmlAgilityPack.HtmlDocument doc;
-        try
-        {
-            CookieContainer cookieContainer = new CookieContainer();
-            web = new HtmlWeb();
-            //handle cookies
-            web.UseCookies = true;
-            web.PreRequest = new HtmlWeb.PreRequestHandler(OnPreRequest2);
-            web.PostResponse = new HtmlWeb.PostResponseHandler(OnAfterResponse2);
-            //load url
-            doc = web.Load(url);
-
-            //more cookie stuff
-            bool OnPreRequest2(HttpWebRequest request)
-            {
-                cookieContainer.Add(new Cookie("birthtime", "568022401") { Domain = new Uri(url).Host});
-                request.CookieContainer = cookieContainer;
-                return true;
-            }
-            void OnAfterResponse2(HttpWebRequest request, HttpWebResponse response)
-            {
-                //do nothing
-            }
-        }
-        catch (Exception e)
-        {
-            errorPopup("Could not connect to Steam! Make sure you are connected to the Internet.\n\n\n\n" + e);
-            return false;
-        }
-        var hasDRM = doc.DocumentNode.CssSelect(".DRM_notice");
-        if(hasDRM.Count() > 0)
-        {
-            string messageBoxText = "DRM Detected!\n\n" + hasDRM.First().InnerText.Trim().Replace("&nbsp;", " ") + "\n\nThe game will still be patched, but may not work without additional cracks!";
-            string caption = "DRM Found";
-            MessageBoxButton button = MessageBoxButton.OK;
-            MessageBoxImage icon = MessageBoxImage.Warning;
-            MessageBoxResult result;
-            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
-            return true;
-        } else
-        {
-            return false;
-        }
+        cracker.setLanguage(language: lang);
     }
 
     public void updateAppID(string newItem, Dictionary<string, string> searchedGames)
     {
-        if (searchedGames.ContainsKey(newItem))
+        if (searchedGames.TryGetValue(newItem, out var game))
         {
-            form.appid.Text = searchedGames[newItem];
+            form.appid.Text = game;
         }
     }
 
@@ -358,31 +177,81 @@ public class Game
     }
 
     //part of generate interfaces
-    private uint findInInterface(StreamWriter outFile, string fileContents, string intrface)
+    private uint findInInterface(StreamWriter outFile, string fileContents, string @interface)
     {
-        Regex interface_regex = new Regex(intrface);
+        Regex interfaceRegex = new Regex(@interface);
         uint matches = 0;
-        foreach (var interf in interface_regex.Matches(fileContents))
+        foreach (var interf in interfaceRegex.Matches(fileContents))
         {
 
-            string match_str = interf.ToString();
-            outFile.WriteLine(match_str);
+            string matchStr = interf.ToString();
+            outFile.WriteLine(matchStr);
             ++matches;
         }
         return matches;
     }
 
-    //creates an error alert with a given message
-    private void errorPopup(string message)
+
+
+    public void detectSettings()
     {
-        string messageBoxText = message;
-        string caption = "Error!";
-        MessageBoxButton button = MessageBoxButton.OK;
-        MessageBoxImage icon = MessageBoxImage.Error;
-        MessageBoxResult result;
+        //remove the *.exe from the path and the last \
+        string gameFolder = "";
+        //check if its a valid path
+        if(gamePath.Contains("\\"))
+        {
+            gameFolder = gamePath.Substring(0, gamePath.LastIndexOf("\\"));
+        }
+        //check if the the file steam_appid.txt exists at gamePath
+        if (File.Exists(gameFolder + "\\steam_appid.txt"))
+        {
+            //read the file
+            string appid = File.ReadAllText(gameFolder + "\\steam_appid.txt");
+            //check if the file is empty
+            if (appid != "")
+            {
+                //set the appid box to the appid
+                form.appid.Text = appid;
+                appID = appid;
+            }
+        }
+            
+        //ceck if the file steam_interfaces.txt exists at gamePath
+        if (File.Exists(gameFolder + "\\steam_interfaces.txt"))
+        {
+            //read the file
+            string interfaces = File.ReadAllText(gameFolder + "\\steam_interfaces.txt");
+            //check if the file is empty
+            if (interfaces == "")
+            {
+                messages.errorPopup("It seems like the steam_interfaces.txt file is empty, but it will be fixed if you click \"Patch\" again.");
+            }
+        }
 
-        result = System.Windows.MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+        //check if the file force_language.txt exists at gamePath\steam_settings
+        if (File.Exists(gameFolder + "\\steam_settings\\force_language.txt"))
+        {
+            //read the file
+            string language = File.ReadAllText(gameFolder + "\\steam_settings\\force_language.txt");
+            //check if the file is empty
+            if (language != "")
+            {
+                form.comboBox1.Text = language;
+            }
+        }
+
+        //check if force_account_name.txt exists at gamePath\steam_settings
+        if (File.Exists(gameFolder + "\\steam_settings\\force_account_name.txt"))
+        {
+            //read the file
+            string accountName = File.ReadAllText(gameFolder + "\\steam_settings\\force_account_name.txt");
+            //check if the file is empty
+            if (accountName != "")
+            {
+                //set the account name box to the account name
+                EasyCrack.Properties.Settings.Default.playername = accountName;
+            }
+        }
+
     }
-
-
 }

@@ -458,7 +458,6 @@ namespace EasyCrack
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label7;
@@ -472,6 +471,7 @@ namespace EasyCrack
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.HelpProvider helpProvider1;
+        public System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

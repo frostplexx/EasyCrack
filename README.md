@@ -18,7 +18,7 @@ This is a simple program, that downloads and configures the Mr_Goldberg steam em
 ## Download
 Download the latest version here: 
 <!-- BEGIN LATEST DOWNLOAD BUTTON -->
-[![Download zip](https://custom-icon-badges.herokuapp.com/badge/-Download-blue?style=for-the-badge&logo=download&logoColor=white "Download zip")](https://github.com/Frostplexx/EasyCrack/releases/download/v.1.2.0/EasyCrack.exe)
+[![Download exe](https://custom-icon-badges.herokuapp.com/badge/-Download-blue?style=for-the-badge&logo=download&logoColor=white "Download exe")](https://github.com/Frostplexx/EasyCrack/releases/latest/download/EasyCrack.exe)
 <!-- END LATEST DOWNLOAD BUTTON -->
 
 ## Usage

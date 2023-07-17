@@ -41,13 +41,7 @@ namespace EasyCrack
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string messageBoxText = "1. Select the folder where the game .exe file is located\n2.Search your game to automatically find the App ID or go to http://steamdb.com and search your game.\n3. Enter the App ID from steamdb into Easy Crack if you did not choose to let EasyCrack search the game for you.\n4. Enter player name, language and if you want to generate a mods folder.\n5. Click on \"Patch\" and watch the magic happen!\n\nFor more info please see: https://gitlab.com/Mr_Goldberg/goldberg_emulator and ";
-            string caption = "Help";
-            MessageBoxButton button = MessageBoxButton.OK;
-            MessageBoxImage icon = MessageBoxImage.Question;
-            MessageBoxResult result;
-
-            result = System.Windows.MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+           new Messages().helpMessageBox();
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -92,11 +86,14 @@ namespace EasyCrack
         private void textBox1_TextChanged_1(object sender, EventArgs e)
         {
             game.gamePath = textBox1.Text;
+            //try to detect the game settings
+            game.detectSettings();
+
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            searchedGames = game.SearchGame(comboBox2.Text);
+            searchedGames = game.steamParser.searchGame(comboBox2.Text, this);
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)
@@ -214,7 +211,7 @@ namespace EasyCrack
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            game.updateLanguage(comboBox1.Text);
         }
 
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
