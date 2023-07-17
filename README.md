@@ -34,4 +34,4 @@ Download the latest version here:
 
 ## Limitations
 
-This works on clean steam files which dont have any DRM other than steamworks. If your game has any other drm you have to remove it.
+This works on clean steam files which dont have any DRM other than steamworks. If your game has any other drm you have to remove it yourself with tools such as Steamless.
